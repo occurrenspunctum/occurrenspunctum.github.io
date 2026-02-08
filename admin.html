@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <title>BUOK Admin | Advanced Event Manager</title>
+    <style>
+        :root {
+            --deep-navy: #003366; --gold: #FFCC33; --bright-blue: #007BC3;
+            --bg-dark: #0a0e14; --card-bg: #16202a; --text-light: #e0e0e0;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-dark); color: var(--text-light); margin: 0; padding-bottom: 50px; }
+        nav { background: var(--deep-navy); padding: 1rem 5%; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .admin-card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 4px solid var(--bright-blue); margin-bottom: 25px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--gold); font-size: 0.8rem; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 10px; background: #0a0e14; border: 1px solid #333; color: white; border-radius: 5px; box-sizing: border-box; }
+        
+        .btn { background: var(--bright-blue); color: white; padding: 10px 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn:hover { opacity: 0.8; }
+        .btn-gold { background: var(--gold); color: var(--deep-navy); margin-top: 10px;}
+        .btn-danger { background: #b30000; }
+
+        .group-entry { background: #1c2a38; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--gold); }
+        .player-row { font-size: 0.85rem; padding: 5px; border-bottom: 1px solid #333; }
+        
+        #login-state, #dashboard-state { display: none; }
+
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 20, 0.5); 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--deep-navy);
+            border-top: 5px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">GOOGLE SHEETS'DEN VERİLER ÇEKİLİYOR...</div>
+    </div>
+
+<nav>
+    <div style="font-weight: 900; color: white;">BUOK ADMIN PANEL</div>
+    <div id="nav-actions"></div>
+</nav>
+
+<div class="container">
+    <div id="login-state">
+        <div class="admin-card" style="text-align: center;">
+            <h2>Yönetici Girişi</h2>
+            <input type="text" id="admin-user" placeholder="Kullanıcı Adı" style="margin-bottom:10px">
+            <input type="password" id="admin-pass" placeholder="Şifre" style="margin-bottom:10px">
+            <button class="btn btn-gold" onclick="attemptLogin()">Giriş</button>
+        </div>
+    </div>
+
+    <div id="dashboard-state">
+        <div class="admin-card">
+            <h2>1. Etkinlik Ekle/Düzenle</h2>
+            <div class="form-grid">
+                <div>
+                    <label>Etkinlik Adı</label>
+                    <input type="text" id="ev-name" placeholder="Örn: Random Encounter #5">
+                </div>
+                <div>
+                    <label>Tarih</label>
+                    <input type="date" id="ev-date">
+                </div>
+            </div>
+            <button class="btn" onclick="saveEvent()">Etkinliği Kaydet</button>
+            <button class="btn btn-gold" onclick="exportJSON()">JSON Çıktısını Al</button>
+        </div>
+
+        <h2>2. Mevcut Etkinlikler ve Gruplar</h2>
+        <div id="event-list"></div>
+
+        <div class="admin-card">
+        <h2>3. Blog Yazısı Ekle</h2>
+            <div class="form-grid">
+                <div>
+                    <label>Başlık</label>
+                    <input type="text" id="blog-title" placeholder="Yazı Başlığı">
+                </div>
+                <div>
+                    <label>Yazar</label>
+                    <input type="text" id="blog-author" placeholder="Yazar">
+                </div>
+            </div>
+            <label>Özet (Kartta görünecek kısa metin)</label>
+            <textarea id="blog-summary" rows="2" style="margin-bottom:15px"></textarea>
+            
+            <label>Tam İçerik</label>
+            <div id="editor-container" style="height: 300px; background: white; color: black; border-radius: 5px;"></div>
+            <input type="hidden" id="blog-content">
+            
+            <button class="btn btn-gold" onclick="saveBlog()">Blog Yazısını Kaydet</button>
+        </div>
+
+        <h2>4. Mevcut Blog Yazıları</h2>
+            <div id="admin-blog-list"></div>
+        </div>
+</div>
+
+<script>
+    let events = [];
+    let blogs = [];
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynNlPBLxGrKs2IEcsVzAMTJJzG9_WPa0bdIHWiG-2_xpnqlUoypH0u_wL_GFSHPwQj6A/exec";
+
+    function showLoading(text) {
+        const overlay = document.getElementById('loading-overlay');
+        const textElement = document.querySelector('.loading-text');
+        if (textElement) textElement.innerText = text;
+        overlay.style.display = 'flex';
+    }
+
+    function hideLoading() {
+        document.getElementById('loading-overlay').style.display = 'none';
+    }
+
+    let quill;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['link', 'clean']
+                ]
+            }
+        });
+    });
+
+    async function attemptLogin() {
+        const u = document.getElementById('admin-user').value;
+        const p = document.getElementById('admin-pass').value;
+        
+        showLoading("KİMLİK DOĞRULANIYOR...");
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ 
+                    action: "login", 
+                    username: u, 
+                    password: p 
+                })
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                sessionStorage.setItem('buok_auth', 'true');
+                checkAuth();
+            } else {
+                alert("Hatalı kullanıcı adı veya şifre!");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Giriş hatası.");
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function checkAuth() {
+        const isAuth = sessionStorage.getItem('buok_auth') === 'true';
+        document.getElementById('login-state').style.display = isAuth ? 'none' : 'block';
+        document.getElementById('dashboard-state').style.display = isAuth ? 'block' : 'none';
+        if (isAuth) loadData();
+    }
+
+    async function loadData() {
+        showLoading("VERİLER ÇEKİLİYOR...");
+        try {
+            const evRes = await fetch(`${SCRIPT_URL}?action=getEvents`);
+            if (evRes.ok) events = await evRes.json();
+
+            const blogRes = await fetch(`${SCRIPT_URL}?action=getBlogs`);
+            if (blogRes.ok) blogs = await blogRes.json();
+
+            renderAll();
+        } catch (e) {
+            console.error(e);
+            alert("Veriler çekilemedi.");
+        } finally {
+            hideLoading();
+        }
+    }
+
+    async function sync(type = 'all') {
+        showLoading("BULUTA KAYDEDİLİYOR...");
+        
+        try {
+            if (type === 'events' || type === 'all') {
+                events.forEach(ev => {
+                    ev.groups.forEach(g => {
+                        g.status = (g.players && g.players.length >= g.capacity) ? "DOLDU" : "Aktif";
+                    });
+                });
+
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "updateEvents", data: events })
+                });
+            }
+
+            if (type === 'blogs' || type === 'all') {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "updateBlogs", data: blogs })
+                });
+            }
+
+            renderAll();
+            alert("Değişiklikler kaydedildi!");
+        } catch (e) {
+            console.error(e);
+            alert("Kaydetme işlemi başarısız.");
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function renderAll() {
+        renderEvents();
+        renderBlogs();
+    }
+
+    function renderEvents() {
+        const container = document.getElementById('event-list');
+        container.innerHTML = '';
+
+        if (events.length === 0) {
+            container.innerHTML = `
+                <div class="admin-card" style="text-align: center; border-left-color: #b30000;">
+                    <h3 style="color: #b30000;">ETKİNLİK YOK</h3>
+                    <p>Henüz bir etkinlik oluşturulmadı. Yukarıdaki formdan yeni bir etkinlik ekleyebilirsiniz.</p>
+                </div>
+            `;
+            return;
+        }
+
+        events.forEach((ev, evIdx) => {
+            const evCard = document.createElement('div');
+            evCard.className = 'admin-card';
+            evCard.style.borderLeftColor = 'var(--gold)';
+            evCard.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>${ev.name} <small>(${ev.date})</small></h3>
+                    <button class="btn btn-danger" onclick="deleteEvent(${evIdx})">Sil</button>
+                </div>
+                <div id="groups-${evIdx}"></div>
+                <div class="group-entry" style="border-left-color: var(--bright-blue); margin-top:20px;">
+                    <label>Yeni Grup Ekle</label>
+                    <div class="form-grid">
+                        <input type="text" id="gname-${evIdx}" placeholder="Masa Adı">
+                        <input type="text" id="gm-${evIdx}" placeholder="GM Adı">
+                        <input type="text" id="phone-${evIdx}" placeholder="GM Telefon">
+                        <input type="number" id="cap-${evIdx}" placeholder="Kapasite">
+                    </div>
+                    <textarea id="desc-${evIdx}" placeholder="Oyun Açıklaması" rows="2" style="margin-bottom:10px"></textarea>
+                    <button class="btn btn-gold" onclick="addGroup(${evIdx})">+ Grubu Kaydet</button>
+                </div>
+            `;
+            container.appendChild(evCard);
+            renderGroups(evIdx);
+        });
+    }
+
+    function renderGroups(evIdx) {
+        const groupList = document.getElementById(`groups-${evIdx}`);
+        groupList.innerHTML = '';
+        events[evIdx].groups.forEach((g, gIdx) => {
+            const gDiv = document.createElement('div');
+            gDiv.className = 'group-entry';
+            
+            const playerDetails = g.players.map(p => `
+                <div class="player-row" style="border-bottom: 1px solid #444; padding: 5px 0;">
+                    <span style="color: var(--gold)">${p.name}</span> | 
+                    <span>${p.phone || 'No Phone'}</span> | 
+                    <span>Okula Girebiliyor Mu: ${p.entry || 'Bilgi Yok'}</span> | 
+                    <small style="font-style: italic; color: #bbb;">${p.notes || 'No Note'}</small>
+                </div>
+            `).join('') || '<div class="player-row">Henüz kimse yok</div>';
+
+            gDiv.innerHTML = `
+                <br><strong>${g.gname}</strong> [${g.status}]
+                <br>GM: ${g.gm} | Kapasite: ${g.capacity}
+                <div style="background:#0a0e14; padding:10px; margin-top:5px; border-radius:5px; font-size:0.8rem;">
+                    <strong>Oyuncu Detayları:</strong>
+                    ${playerDetails}
+                </div>
+                <button class="btn btn-danger" style="margin-top:5px; font-size:0.7rem;" onclick="deleteGroup(${evIdx}, ${gIdx})">Grubu Sil</button>
+            `;
+            groupList.appendChild(gDiv);
+        });
+    }
+
+    function renderBlogs() {
+        const container = document.getElementById('admin-blog-list');
+        container.innerHTML = '';
+        blogs.forEach((blog, idx) => {
+            const card = document.createElement('div');
+            card.className = 'admin-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="color:var(--gold)">${blog.title}</strong><br>
+                        <small>${blog.author} | ${blog.date}</small>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteBlog(${idx})">Sil</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function saveBlog() {
+        const title = document.getElementById('blog-title').value;
+        const author = document.getElementById('blog-author').value;
+        const summary = document.getElementById('blog-summary').value;
+        
+        const content = quill.root.innerHTML; 
+        
+        if(!title || content === '<p><br></p>') return alert("Başlık ve içerik zorunludur.");
+
+        const newBlog = {
+            id: Date.now(),
+            title,
+            author,
+            summary,
+            content,
+            date: new Date().toLocaleDateString('tr-TR'),
+            published: true 
+        };
+
+        blogs.push(newBlog);
+        sync('blogs');
+        
+        document.getElementById('blog-title').value = '';
+        document.getElementById('blog-author').value = '';
+        document.getElementById('blog-summary').value = '';
+        quill.setContents([]);
+    }
+
+    function deleteBlog(idx) {
+        if(confirm("Bu blog yazısını silmek istediğinize emin misiniz?")) {
+            blogs.splice(idx, 1);
+            sync('blogs');
+        }
+    }
+
+    function saveEvent() {
+        const name = document.getElementById('ev-name').value;
+        const date = document.getElementById('ev-date').value;
+        if(!name || !date) return alert("İsim ve tarih zorunludur.");
+        events.push({ id: Date.now(), name, date, groups: [], published: true });
+        sync('events');
+    }
+
+    function addGroup(evIdx) {
+        const newGroup = {
+            id: 'g' + Date.now(),
+            gname: document.getElementById(`gname-${evIdx}`).value,
+            gm: document.getElementById(`gm-${evIdx}`).value,
+            gm_phone: document.getElementById(`phone-${evIdx}`).value,
+            capacity: parseInt(document.getElementById(`cap-${evIdx}`).value) || 0,
+            status: "Aktif",
+            description: document.getElementById(`desc-${evIdx}`).value,
+            players: []
+        };
+        events[evIdx].groups.push(newGroup);
+        sync('events');
+    }
+
+    function deleteEvent(idx) { if(confirm("Silmek istiyor musunuz?")) { events.splice(idx, 1); sync('events'); } }
+    function deleteGroup(evIdx, gIdx) { events[evIdx].groups.splice(gIdx, 1); sync('events'); }
+
+    window.onload = checkAuth;
+</script>
+</body>
+</html>

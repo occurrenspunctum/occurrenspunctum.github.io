@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | BUOK</title>
+    <style>
+        :root {
+            --deep-navy: #003366;   /* Logo Border/Star */
+            --gold: #FFCC33;        /* Logo Yellow */
+            --bright-blue: #007BC3; /* Logo Blue */
+            --bg-dark: #0a0e14;     /* Deep Dark background */
+            --card-bg: #16202a;     /* Slightly lighter dark for cards */
+            --text-light: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Navigasyon*/
+        nav {
+            background: var(--deep-navy);
+            padding: 1rem 5%;
+            position: sticky;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--gold);
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover { color: var(--gold); }
+
+        .logo-link {
+            text-decoration: none; 
+            color: white; 
+            transition: color 0.3s ease;
+            display: inline-block;
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        /* Blog Welcome */
+        .blog-welcome {
+            background: linear-gradient(135deg, var(--deep-navy) 0%, #001a33 100%);
+            padding: 60px 5%;
+            border-bottom: 2px solid var(--gold);
+            text-align: center;
+        }
+
+        .blog-welcome h1 {
+            color: var(--gold);
+            font-size: 3rem;
+            margin: 0;
+        }
+
+        /* Blog Grid - .neyapiyoruz'un buradaki versiyonu */
+        .blog-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        .blog-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid var(--bright-blue);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+            border-left: 4px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .blog-card h3 { 
+            color: var(--gold); 
+            margin-top: 0; 
+            font-size: 1.6rem;
+        }
+
+        .blog-card .meta {
+            color: var(--bright-blue);
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .read-more-btn {
+            display: inline-block;
+            margin-top: auto;
+            padding: 10px 20px;
+            background: var(--bright-blue);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .read-more-btn:hover { background: #005f96; }
+
+        .logo-link {
+            text-decoration: none; 
+            color: white; 
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+
+        a:hover { color: var(--gold)}
+
+        footer {
+            text-align: center;
+            padding: 50px;
+            background: #05070a;
+            color: #666;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo-container">
+        <a href="index.html" class="logo-link">BUOK</a>
+    </div>
+    <div class="nav-links">
+        <a href="https://boardgamegeek.com/collection/user/BUOK">OYUN LİSTESİ</a>
+        <a href="blog.html">BLOG</a>
+        <a href="https://www.instagram.com/boun_buok/">INSTAGRAM</a>
+    </div>
+</nav>
+
+<div class="blog-welcome">
+    <h1>KULÜP BLOGU</h1>
+</div>
+
+<div class="blog-container" id="blog-list">
+    </div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynNlPBLxGrKs2IEcsVzAMTJJzG9_WPa0bdIHWiG-2_xpnqlUoypH0u_wL_GFSHPwQj6A/exec";
+
+    // Blog linklerini fetchle
+    async function loadBlogs() {
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getBlogs`);
+            const blogs = await res.json();
+            const container = document.getElementById('blog-list');
+            
+            container.innerHTML = blogs.map(blog => `
+                <div class="blog-card">
+                    <div class="meta">${blog.date} • ${blog.author}</div>
+                    <h3>${blog.title}</h3>
+                    <p>${blog.summary}</p>
+                    <a href="blog_page.html?id=${blog.id}" class="read-more-btn">OKU</a>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error("Bloglar yüklenemedi", e);
+        }
+    }
+
+    window.onload = loadBlogs;
+</script>
+<footer>
+    © 2026 BUOK - Boğaziçi Üniversitesi Oyun Kulübü
+</footer>
+
+</body>
+</html>

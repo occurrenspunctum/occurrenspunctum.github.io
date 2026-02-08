@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makale Başlığı | BUOK</title>
+    <style>
+        :root {
+            --deep-navy: #003366;   /* Logo Border/Star */
+            --gold: #FFCC33;        /* Logo Yellow */
+            --bright-blue: #007BC3; /* Logo Blue */
+            --bg-dark: #0a0e14;     /* Deep Dark background */
+            --card-bg: #16202a;     /* Slightly lighter dark for cards */
+            --text-light: #e0e0e0;  /* Standard text light */
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            margin: 0;
+            line-height: 1.8;
+        }
+
+        nav {
+            background: var(--deep-navy);
+            padding: 1rem 5%;
+            position: sticky;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--gold);
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover { color: var(--gold); }
+
+        .logo-link {
+            text-decoration: none; 
+            color: white; 
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        .article-header {
+            background: linear-gradient(180deg, var(--deep-navy) 0%, var(--bg-dark) 100%);
+            padding: 80px 10%;
+            text-align: center;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .article-header h1 {
+            color: var(--gold);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .meta-info {
+            color: var(--bright-blue);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .article-content {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-size: 1.1rem;
+        }
+
+        .article-content p {
+            margin-bottom: 25px;
+        }
+
+        .highlight-box {
+            background: var(--card-bg);
+            padding: 25px;
+            border-left: 4px solid var(--bright-blue);
+            border-radius: 8px;
+            margin: 40px 0;
+            font-style: italic;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        .logo-link {
+            text-decoration: none; 
+            color: white; 
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+
+        a:hover { color: var(--gold)}
+
+        footer {
+            text-align: center;
+            padding: 50px;
+            background: #05070a;
+            color: #666;
+            border-top: 1px solid #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo-container">
+        <a href="index.html" class="logo-link">BUOK</a>
+    </div>
+    <div class="nav-links">
+        <a href="https://boardgamegeek.com/collection/user/BUOK">OYUN LİSTESİ</a>
+        <a href="blog.html">BLOG</a>
+        <a href="https://www.instagram.com/boun_buok/">INSTAGRAM</a>
+    </div>
+</nav>
+
+<header class="article-header">
+    <div class="meta-info" id="post-meta">YÜKLENİYOR...</div>
+    <h1 id="post-title">Lütfen Bekleyin</h1>
+</header>
+
+<main class="article-content" id="post-content">
+    <p>İçerik yükleniyor...</p>
+</main>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynNlPBLxGrKs2IEcsVzAMTJJzG9_WPa0bdIHWiG-2_xpnqlUoypH0u_wL_GFSHPwQj6A/exec";
+
+    // Makale Yükle
+    async function loadArticle() {
+        const params = new URLSearchParams(window.location.search);
+        const postId = params.get('id');
+
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getBlogs`);
+            const blogs = await res.json();
+            
+            const post = blogs.find(b => b.id == postId);
+
+            if (post) {
+                document.title = `${post.title} | BUOK`;
+                document.getElementById('post-title').innerText = post.title;
+                document.getElementById('post-meta').innerText = `${post.date} • ${post.author}`;
+                document.getElementById('post-content').innerHTML = post.content;
+            } else {
+                document.getElementById('post-title').innerText = "Yazı Bulunamadı";
+            }
+        } catch (e) {
+            alert("Yazı yüklenirken hata oluştu.");
+        }
+    }
+
+    window.onload = loadArticle;
+</script>
+
+<footer>
+    © 2026 BUOK - Boğaziçi Üniversitesi Oyun Kulübü
+</footer>
+
+</body>
+</html>

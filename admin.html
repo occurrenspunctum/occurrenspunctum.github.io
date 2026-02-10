@@ -226,12 +226,6 @@
         
         try {
             if (type === 'events' || type === 'all') {
-                events.forEach(ev => {
-                    ev.groups.forEach(g => {
-                        g.status = (g.capacity > 0 && g.players && g.players.length >= g.capacity) ? "DOLDU" : "Aktif";
-                    });
-                });
-
                 await fetch(SCRIPT_URL, {
                     method: "POST",
                     body: JSON.stringify({ action: "updateEvents", data: events })
@@ -318,7 +312,7 @@
             `).join('') || '<div class="player-row">Henüz kimse yok</div>';
 
             gDiv.innerHTML = `
-                <br><strong>${g.gname}</strong> [${g.status}]
+                <br><strong>${g.gname}</strong>
                 <br>GM: ${g.gm} | ${g.gm_phone} | Kapasite: ${g.capacity}
                 <div style="background:#0a0e14; padding:10px; margin-top:5px; border-radius:5px; font-size:0.8rem;">
                     <strong>Oyuncu Detayları:</strong>
@@ -399,7 +393,6 @@
             gm: document.getElementById(`gm-${evIdx}`).value,
             gm_phone: document.getElementById(`phone-${evIdx}`).value,
             capacity: parseInt(document.getElementById(`cap-${evIdx}`).value) || 0,
-            status: "Aktif",
             description: document.getElementById(`desc-${evIdx}`).value,
             players: []
         };
@@ -414,5 +407,6 @@
 </script>
 </body>
 </html>
+
 
 

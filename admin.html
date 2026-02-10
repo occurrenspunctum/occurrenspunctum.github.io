@@ -301,6 +301,9 @@
         events[evIdx].groups.forEach((g, gIdx) => {
             const gDiv = document.createElement('div');
             gDiv.className = 'group-entry';
+
+            const isFull = g.players && g.players.length >= g.capacity;
+            const statusText = isFull ? '<span style="color: #ff4444; font-weight: bold;"> [DOLDU]</span>' : '';
             
             const playerDetails = g.players.map(p => `
                 <div class="player-row" style="border-bottom: 1px solid #444; padding: 5px 0;">
@@ -407,6 +410,7 @@
 </script>
 </body>
 </html>
+
 
 
 

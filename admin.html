@@ -315,7 +315,7 @@
             `).join('') || '<div class="player-row">Henüz kimse yok</div>';
 
             gDiv.innerHTML = `
-                <br><strong>${g.gname}</strong> [${statusText}]
+                <br><strong>${g.gname}</strong> ${statusText}
                 <br>GM: ${g.gm} | ${g.gm_phone} | Kapasite: ${g.capacity}
                 <div style="background:#0a0e14; padding:10px; margin-top:5px; border-radius:5px; font-size:0.8rem;">
                     <strong>Oyuncu Detayları:</strong>
@@ -410,6 +410,7 @@
 </script>
 </body>
 </html>
+
 
 
 

@@ -296,15 +296,11 @@
 
     function renderGroups(evIdx) {
         const groupList = document.getElementById(`groups-${evIdx}`);
+        const isFull = g.players.length >= g.capacity || gStatus === "DOLDU";
         groupList.innerHTML = '';
         events[evIdx].groups.forEach((g, gIdx) => {
             const gDiv = document.createElement('div');
             gDiv.className = 'group-entry';
-
-            let gStatus = "Aktif";
-            if (g.players.length >= g.capacity){
-                gStatus = "DOLDU";
-            }
             
             const playerDetails = g.players.map(p => `
                 <div class="player-row" style="border-bottom: 1px solid #444; padding: 5px 0;">
@@ -316,7 +312,7 @@
             `).join('') || '<div class="player-row">Henüz kimse yok</div>';
 
             gDiv.innerHTML = `
-                <br><strong>${g.gname}</strong> [${gStatus}]
+                <br><strong>${g.gname}</strong> [${isFull ? '[DOLDU]' : 'Aktif']
                 <br>GM: ${g.gm} | ${g.gm_phone || 'No Phone'} | Kapasite: ${g.capacity}
                 <div style="background:#0a0e14; padding:10px; margin-top:5px; border-radius:5px; font-size:0.8rem;">
                     <strong>Oyuncu Detayları:</strong>
@@ -412,6 +408,7 @@
 </body>
 
 </html>
+
 
 
 

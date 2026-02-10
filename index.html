@@ -231,9 +231,9 @@
         
         groupSelect.innerHTML = '<option value="">Masa Seçiniz...</option>' + 
             event.groups.map(g => {
-                const isFull = g.players.length >= g.capacity || g.status === "DOLDU";
+                const isFull = g.players && g.players.length >= g.capacity; 
                 return `<option value="${g.id}" ${isFull ? 'disabled' : ''}>
-                    ${g.gname} - ${g.gm} (${g.players.length}/${g.capacity}) ${isFull ? '[DOLDU]' : ''}
+                    ${g.gname} - ${g.gm} (${g.players ? g.players.length : 0}/${g.capacity}) ${isFull ? '[DOLDU]' : ''}
                 </option>`;
             }).join('');
         
@@ -399,4 +399,5 @@
 
 </body>
 </html>
+
 

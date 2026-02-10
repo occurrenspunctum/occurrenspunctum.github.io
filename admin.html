@@ -228,7 +228,7 @@
             if (type === 'events' || type === 'all') {
                 events.forEach(ev => {
                     ev.groups.forEach(g => {
-                        g.status = (g.players && g.players.length >= g.capacity) ? "DOLDU" : "Aktif";
+                        g.status = (g.capacity > 0 && g.players && g.players.length >= g.capacity) ? "DOLDU" : "Aktif";
                     });
                 });
 
@@ -414,4 +414,5 @@
 </script>
 </body>
 </html>
+
 

@@ -3,400 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUOK | Boğaziçi Üniversitesi Oyun Kulübü</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <title>BUOK Admin | Advanced Event Manager</title>
     <style>
         :root {
-            --deep-navy: #003366;   /* Logo Border/Star */
-            --gold: #FFCC33;        /* Logo Yellow */
-            --bright-blue: #007BC3; /* Logo Blue */
-            --bg-dark: #0a0e14;     /* Deep Dark background */
-            --card-bg: #16202a;     /* Slightly lighter dark for cards */
-            --text-light: #e0e0e0;
+            --deep-navy: #003366; --gold: #FFCC33; --bright-blue: #007BC3;
+            --bg-dark: #0a0e14; --card-bg: #16202a; --text-light: #e0e0e0;
         }
-
-        /*Gövde ile ilgili default ayarlar*/
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        /*Navigasyon*/
-        nav {
-            background: var(--deep-navy);
-            padding: 1rem 5%;
-            position: sticky;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid var(--gold);
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-links a {
-            margin-left: 20px;
-            text-decoration: none;
-            color: white; /*Bunun rengi altın rengine de değiştirebiliriz*/
-            font-weight: bold;
-            font-size: 0.9rem;
-            transition: var(--gold) 0.3s ease; /*İmleç linke geldiğinde rengi değişsin*/
-        }
-
-        /*Renk değişimindeki renk (neden transition'da yapamadığımı ben de bilmiyorum)*/
-        a:hover { color: var(--gold)}
-
-        /*Bütün titlelar merkeze eşlenmiş olması lazım*/
-        .title {text-align: center}
-
-        h1 { color: var(--gold); font-size: 3rem; margin-bottom: 0; }
-
-        /*BUOK logosunun linki navigasyondaki diğer linklerden farklı bir tasarımı var*/
-        .logo-link {
-            text-decoration: none; 
-            color: white; 
-            transition: color 0.3s ease;
-            display: inline-block;
-        }
-
-        /*Hakkımızda Kısmı*/
-        .hakkimizda {
-            background-color: var(--gold);
-            color: var(--deep-navy);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            padding: 2rem 10%;
-        }
-
-        /*Ne Yapıyoruz Kısmı*/
-        .neyapiyoruz {
-            max-width: 1200px;
-            margin: 40px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            padding: 0 20px;
-        }
-
-        /*Ne Yapıyoruz ve Blog kısmındaki kartların tasarımı*/
-        .card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            border-left: 4px solid var(--bright-blue);
-            transition: all 0.3s ease;
-        }
-
-        /*İmleç Kartların üstüne geldiği zaman hareketi*/
-        .card:hover {
-            transform: translateY(-10px);
-            border-left: 4px solid var(--gold);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /*Kartın içindeki h3'ler yukarıda ve altın renginde olsun*/
-        .card h3 { color: var(--gold); margin-top: 0; }
-
-        /*Blogtaki kartlar, diğer kartlardan farklı arkaplana ve birbirleri arasında daha az mesafeye ihtiyacı var*/
-        /*Buna sol sınırının renkli olmasına pek gerek olmadığını düşündüm ama buradan eklenebilir.*/
-        .blog > .card{
-            background: var(--bright-blue);
-            border-left: none;
-            margin: 30px;
-        }
-
-        /*Standart olarak kabul ettiğim buton Kayıt kısmında yer alan gibi düşündüm*/
-        /*Sonra onda da oynamalar yaptım ama kodu çok eşelemek istemediğim için duruyor*/
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: var(--bright-blue);
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .btn:hover { background: #005f96; }
-
-        .blog > .btn:hover {background: var(--gold);}
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-dark); color: var(--text-light); margin: 0; padding-bottom: 50px; }
+        nav { background: var(--deep-navy); padding: 1rem 5%; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .admin-card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 4px solid var(--bright-blue); margin-bottom: 25px; }
         
-        /*Fotoğraf Albümünden Örnekler*/
-        .photo-album{
-            background-color: var(--deep-navy);
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--gold); font-size: 0.8rem; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 10px; background: #0a0e14; border: 1px solid #333; color: white; border-radius: 5px; box-sizing: border-box; }
+        
+        .btn { background: var(--bright-blue); color: white; padding: 10px 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn:hover { opacity: 0.8; }
+        .btn-gold { background: var(--gold); color: var(--deep-navy); margin-top: 10px;}
+        .btn-danger { background: #b30000; }
+
+        .group-entry { background: #1c2a38; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--gold); }
+        .player-row { font-size: 0.85rem; padding: 5px; border-bottom: 1px solid #333; }
+        
+        #login-state, #dashboard-state { display: none; }
+
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 20, 0.5); 
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
         }
 
-        footer {
-            text-align: center;
-            padding: 50px;
-            background: #05070a;
-            color: #666;
-            border-top: 1px solid #1a1a1a;
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--deep-navy);
+            border-top: 5px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
         }
 
-        @media screen and (max-width: 768px) {
-            .hakkimizda > h1 {
-                text-align: center;
-            }
-}
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">GOOGLE SHEETS'DEN VERİLER ÇEKİLİYOR...</div>
+    </div>
 
 <nav>
-    <div class="logo-container" style = "display: flex; align-items: center;">
-        <span style="font-size: 1.5rem; font-weight: 900;"><a href="index.html" class="logo-link">BUOK</a></span>
-    </div>
-    <div class="nav-links">
-        <a href="https://boardgamegeek.com/collection/user/BUOK">OYUN LİSTESİ</a>
-        <a href="blog.html">BLOG</a>
-        <a href="https://www.instagram.com/boun_buok/">INSTAGRAM</a>
-    </div>
+    <div style="font-weight: 900; color: white;">BUOK ADMIN PANEL</div>
+    <div id="nav-actions"></div>
 </nav>
 
-<!--Etkinlik Kayıt Kısmı-->
-<!--Burayı sonradan yapmıştım o yüzden style'lar böyle görünüyor.-->
-<!--Biraz kötü görünüyor olabilir, kusuruma bakmayın-->
-<header id="registration-section" style="background-color: var(--card-bg); padding: 2rem 5%; border-bottom: 3px solid var(--bright-blue); display: none;">
-    <h2 style="color: var(--gold); text-align: center; margin-top: 0;">Etkinlik Kayıt Formu</h2>
-    
-    <div id="event-selector-container" style="max-width: 600px; margin: 0 auto 20px;">
-        <label><strong>Etkinlik Seçin:</strong></label>
-        <select id="event-select" onchange="updateGroupOptions()" style="width:100%; padding:10px; border-radius:5px; background:#0a0e14; color:white; border:1px solid var(--gold);"></select>
+<div class="container">
+    <div id="login-state">
+        <div class="admin-card" style="text-align: center;">
+            <h2>Yönetici Girişi</h2>
+            <input type="text" id="admin-user" placeholder="Kullanıcı Adı" style="margin-bottom:10px">
+            <input type="password" id="admin-pass" placeholder="Şifre" style="margin-bottom:10px">
+            <button class="btn btn-gold" onclick="attemptLogin()">Giriş</button>
+        </div>
     </div>
 
-    <div id="registration-form" style="max-width: 600px; margin: 0 auto; display: grid; gap: 15px;">
-        <div>
-            <label><strong>Masa / Grup Seçin:</strong></label>
-            <select id="group-select" onchange="showGroupDescription()" style="width:100%; padding:10px; border-radius:5px; background:#0a0e14; color:white; border:1px solid var(--gold);"></select>
+    <div id="dashboard-state">
+        <div class="admin-card">
+            <h2>1. Etkinlik Ekle/Düzenle</h2>
+            <div class="form-grid">
+                <div>
+                    <label>Etkinlik Adı</label>
+                    <input type="text" id="ev-name" placeholder="Örn: Random Encounter #5">
+                </div>
+                <div>
+                    <label>Tarih</label>
+                    <input type="date" id="ev-date">
+                </div>
+            </div>
+            <button class="btn" onclick="saveEvent()">Etkinliği Kaydet</button>
         </div>
 
-        <div id="group-desc-box" style="display: none;">
-            <strong>Oyun Açıklaması:</strong>
-            <p id="group-desc-text" style="font-size: 0.9rem; padding: 10px; margin-top: 5px; color: #e0e0e0; background-color: var(--bg-dark); border-radius: 5px; border:1px solid var(--gold)"></p>
+        <h2>2. Mevcut Etkinlikler ve Gruplar</h2>
+        <div id="event-list"></div>
+
+        <div class="admin-card">
+        <h2>3. Blog Yazısı Ekle</h2>
+            <div class="form-grid">
+                <div>
+                    <label>Başlık</label>
+                    <input type="text" id="blog-title" placeholder="Yazı Başlığı">
+                </div>
+                <div>
+                    <label>Yazar</label>
+                    <input type="text" id="blog-author" placeholder="Yazar">
+                </div>
+            </div>
+            <label>Özet (Kartta görünecek kısa metin)</label>
+            <textarea id="blog-summary" rows="2" style="margin-bottom:15px"></textarea>
+            
+            <label>Tam İçerik</label>
+            <div id="editor-container" style="height: 300px; background: white; color: black; border-radius: 5px;"></div>
+            <input type="hidden" id="blog-content">
+            
+            <button class="btn btn-gold" onclick="saveBlog()">Blog Yazısını Kaydet</button>
         </div>
 
-        <strong>Oyuncu Bilgileri:</strong>
-        <input type="text" id="name" placeholder="Ad Soyad" required style="padding:10px; border-radius:5px;">
-        <input type="text" id="phone" placeholder="Telefon Numarası" required style="padding:10px; border-radius:5px;">
-        <select id="entry" style="padding:10px; border-radius:5px;">
-            <option value="">Okula Giriş Yetkiniz Var mı?</option>
-            <option value="Evet">Evet (Öğrenci/Mezun)</option>
-            <option value="Hayır">Hayır (Dış Katılımcı)</option>
-        </select>
-        <textarea id="notes" placeholder="Karakter Tercihleriniz veya Notlar" style="padding:10px; border-radius:5px;"></textarea>
-        
-        <button class="btn" onclick="submitRegistration()" style="width:100%;">KAYDOL</button>
-    </div>
-</header>
+        <h2>4. Mevcut Blog Yazıları</h2>
+            <div id="admin-blog-list"></div>
+        </div>
+</div>
 
 <script>
-    // Sunucuya sürekli erişimimiz olmayacağı için veri saklama ve değişimler Google Sheets'ten yapmayı düşünüyorum.
+    let events = [];
+    let blogs = [];
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynNlPBLxGrKs2IEcsVzAMTJJzG9_WPa0bdIHWiG-2_xpnqlUoypH0u_wL_GFSHPwQj6A/exec";
-    let allEvents = [];
 
-    // Veriyi linkten çek
-    async function fetchEvents() {
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getEvents`);
-            allEvents = await res.json();
-            
-            if (allEvents.length > 0) {
-                document.getElementById('registration-section').style.display = 'block';
-                populateEvents();
+    function showLoading(text) {
+        const overlay = document.getElementById('loading-overlay');
+        const textElement = document.querySelector('.loading-text');
+        if (textElement) textElement.innerText = text;
+        overlay.style.display = 'flex';
+    }
+
+    function hideLoading() {
+        document.getElementById('loading-overlay').style.display = 'none';
+    }
+
+    let quill;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['link', 'clean']
+                ]
             }
-        } catch (e) { console.error("Veri yüklenemedi"); }
-    }
+        });
+    });
 
-    // Çekilen etkinlikleri  event-select üzerinden göster
-    function populateEvents() {
-        const evSelect = document.getElementById('event-select');
-        evSelect.innerHTML = allEvents.map(ev => `<option value="${ev.id}">${ev.name} (${ev.date})</option>`).join('');
-        updateGroupOptions();
-    }
-
-    // Her etkinliğin gruplarını group-select'de göster:
-    function updateGroupOptions() {
-        const evId = document.getElementById('event-select').value;
-        const event = allEvents.find(e => e.id == evId);
-        const groupSelect = document.getElementById('group-select');
+    async function attemptLogin() {
+        const u = document.getElementById('admin-user').value;
+        const p = document.getElementById('admin-pass').value;
         
-        groupSelect.innerHTML = '<option value="">Masa Seçiniz...</option>' + 
-            event.groups.map(g => {
-                const isFull = g.players.length >= g.capacity || g.status === "DOLDU";
-                return `<option value="${g.id}" ${isFull ? 'disabled' : ''}>
-                    ${g.gname} - ${g.gm} (${g.players.length}/${g.capacity}) ${isFull ? '[DOLDU]' : ''}
-                </option>`;
-            }).join('');
-        
-        showGroupDescription();
-    }
-
-    // Her grubun açıklamasını göster
-    // Önceki selectlerden farklı olarak sadece tek bir şey göstermesi ve p şeklinde görünmesi gerekiyor
-    function showGroupDescription() {
-        const evId = document.getElementById('event-select').value;
-        const groupId = document.getElementById('group-select').value;
-        const descBox = document.getElementById('group-desc-box');
-        const descText = document.getElementById('group-desc-text');
-
-        if (!groupId) {
-            descBox.style.display = 'none';
-            return;
-        }
-
-        const event = allEvents.find(e => e.id == evId);
-        const group = event.groups.find(g => g.id === groupId);
-
-        if (group && group.description) {
-            descText.innerText = group.description;
-            descBox.style.display = 'block';
-        } else {
-            descBox.style.display = 'none';
-        }
-    }
-
-    //Yazılan her şeyi 
-    async function submitRegistration() {
-        const eventId = document.getElementById('event-select').value;
-        const groupId = document.getElementById('group-select').value;
-
-        const pName = document.getElementById('name').value;
-        const pPhone = document.getElementById('phone').value;
-        const pEntry = document.getElementById('entry').value;
-        const pChoices = document.getElementById('notes').value;
-
-        // Validation
-        if(!pName || !pPhone || !groupId) {
-            alert("Lütfen tüm zorunlu alanları doldurun.");
-            return;
-        }
-
-        const playerData = {
-            name: pName,
-            phone: pPhone,
-            entry: pEntry,
-            notes: pChoices 
-        };
-
-        if(!confirm("Kaydolmak istediğinize emin misiniz?")) return;
-
+        showLoading("KİMLİK DOĞRULANIYOR...");
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8",
-                },
-                body: JSON.stringify({
-                    action: "registerPlayer",
-                    eventId: eventId,
-                    groupId: groupId,
-                    playerData: playerData
+                body: JSON.stringify({ 
+                    action: "login", 
+                    username: u, 
+                    password: p 
                 })
             });
-
-            // Google Apps Script POST isteklerinde redirect yaptığı için
-            // yanıt bazen doğrudan JSON olmayabilir.
             const result = await response.json();
 
             if (result.success) {
-                alert("Başarıyla kaydoldunuz!");
-                location.reload();
+                sessionStorage.setItem('buok_auth', 'true');
+                checkAuth();
             } else {
-                alert("Hata: " + result.message);
+                alert("Hatalı kullanıcı adı veya şifre!");
             }
-        } catch (e) { // Sürekli CORS engeli ile karşılaştığım için böyle bir şey eklendim. Belki bunu kaldırabilirim.
-            console.error("Detaylı Hata:", e);
-            alert("Bağlantı hatası veya CORS engeli oluştu. Lütfen Google Script ayarlarını kontrol edin.");
-        }
-    }
-
-    // Normalde burası Blog kısmının altında olacaktı ama veri çekmeyi aynı anda yapması için bu fonksiyonu buraya ekledim.
-    async function fetchLatestBlogs() {
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getBlogs`);
-            const blogs = await res.json();
-            
-            //En son 3 blog. İstenirse sayısı arttırılır.
-            const latestBlogs = blogs.slice(-3).reverse(); 
-
-            const container = document.getElementById('latest-blog-container');
-            
-            if (latestBlogs.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--gold);">Henüz yayınlanmış bir yazı bulunmuyor.</p>';
-                return;
-            }
-
-            container.innerHTML = latestBlogs.map(blog => `
-                <div class="card" style="background: var(--bright-blue); border-left: none; margin: 10px; display: flex; flex-direction: column;">
-                    <h3 style="color: white;">${blog.title}</h3>
-                    <h4 style="color: var(--gold); margin-top: 0;">${blog.author} - ${blog.date}</h4>
-                    <p style="color: white; margin-top: 0; flex-grow: 1;">${blog.summary}</p>
-                    <a href="blog_page.html?id=${blog.id}" class="btn" style="background: var(--deep-navy); align-self: flex-start;">DEVAMINI OKU</a>
-                </div>
-            `).join('');
         } catch (e) {
-            console.error("Bloglar yüklenirken hata oluştu:", e);
-            document.getElementById('latest-blog-container').innerHTML = '<p style="text-align: center; color: var(--gold);">Yazılar şu an yüklenemiyor.</p>';
+            console.error(e);
+            alert("Giriş hatası.");
+        } finally {
+            hideLoading();
         }
     }
 
-    window.onload = () => {
-        fetchEvents();     
-        fetchLatestBlogs();
-    };
+    function checkAuth() {
+        const isAuth = sessionStorage.getItem('buok_auth') === 'true';
+        document.getElementById('login-state').style.display = isAuth ? 'none' : 'block';
+        document.getElementById('dashboard-state').style.display = isAuth ? 'block' : 'none';
+        if (isAuth) loadData();
+    }
+
+    async function loadData() {
+        showLoading("VERİLER ÇEKİLİYOR...");
+        try {
+            const evRes = await fetch(`${SCRIPT_URL}?action=getEvents`);
+            if (evRes.ok) events = await evRes.json();
+
+            const blogRes = await fetch(`${SCRIPT_URL}?action=getBlogs`);
+            if (blogRes.ok) blogs = await blogRes.json();
+
+            renderAll();
+        } catch (e) {
+            console.error(e);
+            alert("Veriler çekilemedi.");
+        } finally {
+            hideLoading();
+        }
+    }
+
+    async function sync(type = 'all') {
+        showLoading("BULUTA KAYDEDİLİYOR...");
+        
+        try {
+            if (type === 'events' || type === 'all') {
+                events.forEach(ev => {
+                    ev.groups.forEach(g => {
+                        g.status = (g.players && g.players.length >= g.capacity) ? "DOLDU" : "Aktif";
+                    });
+                });
+
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "updateEvents", data: events })
+                });
+            }
+
+            if (type === 'blogs' || type === 'all') {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "updateBlogs", data: blogs })
+                });
+            }
+
+            renderAll();
+            alert("Değişiklikler kaydedildi!");
+        } catch (e) {
+            console.error(e);
+            alert("Kaydetme işlemi başarısız.");
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function renderAll() {
+        renderEvents();
+        renderBlogs();
+    }
+
+    function renderEvents() {
+        const container = document.getElementById('event-list');
+        container.innerHTML = '';
+
+        if (events.length === 0) {
+            container.innerHTML = `
+                <div class="admin-card" style="text-align: center; border-left-color: #b30000;">
+                    <h3 style="color: #b30000;">ETKİNLİK YOK</h3>
+                    <p>Henüz bir etkinlik oluşturulmadı. Yukarıdaki formdan yeni bir etkinlik ekleyebilirsiniz.</p>
+                </div>
+            `;
+            return;
+        }
+
+        events.forEach((ev, evIdx) => {
+            const evCard = document.createElement('div');
+            evCard.className = 'admin-card';
+            evCard.style.borderLeftColor = 'var(--gold)';
+            evCard.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>${ev.name} <small>(${ev.date})</small></h3>
+                    <button class="btn btn-danger" onclick="deleteEvent(${evIdx})">Sil</button>
+                </div>
+                <div id="groups-${evIdx}"></div>
+                <div class="group-entry" style="border-left-color: var(--bright-blue); margin-top:20px;">
+                    <label>Yeni Grup Ekle</label>
+                    <div class="form-grid">
+                        <input type="text" id="gname-${evIdx}" placeholder="Masa Adı">
+                        <input type="text" id="gm-${evIdx}" placeholder="GM Adı">
+                        <input type="text" id="phone-${evIdx}" placeholder="GM Telefon">
+                        <input type="number" id="cap-${evIdx}" placeholder="Kapasite">
+                    </div>
+                    <textarea id="desc-${evIdx}" placeholder="Oyun Açıklaması" rows="2" style="margin-bottom:10px"></textarea>
+                    <button class="btn btn-gold" onclick="addGroup(${evIdx})">+ Grubu Kaydet</button>
+                </div>
+            `;
+            container.appendChild(evCard);
+            renderGroups(evIdx);
+        });
+    }
+
+    function renderGroups(evIdx) {
+        const groupList = document.getElementById(`groups-${evIdx}`);
+        groupList.innerHTML = '';
+        events[evIdx].groups.forEach((g, gIdx) => {
+            const gDiv = document.createElement('div');
+            gDiv.className = 'group-entry';
+            
+            const playerDetails = g.players.map(p => `
+                <div class="player-row" style="border-bottom: 1px solid #444; padding: 5px 0;">
+                    <span style="color: var(--gold)">${p.name}</span> | 
+                    <span>${p.phone || 'No Phone'}</span> | 
+                    <span>Okula Girebiliyor Mu: ${p.entry || 'Bilgi Yok'}</span> | 
+                    <small style="font-style: italic; color: #bbb;">${p.notes || 'No Note'}</small>
+                </div>
+            `).join('') || '<div class="player-row">Henüz kimse yok</div>';
+
+            gDiv.innerHTML = `
+                <br><strong>${g.gname}</strong> [${g.status}]
+                <br>GM: ${g.gm} | Kapasite: ${g.capacity}
+                <div style="background:#0a0e14; padding:10px; margin-top:5px; border-radius:5px; font-size:0.8rem;">
+                    <strong>Oyuncu Detayları:</strong>
+                    ${playerDetails}
+                </div>
+                <button class="btn btn-danger" style="margin-top:5px; font-size:0.7rem;" onclick="deleteGroup(${evIdx}, ${gIdx})">Grubu Sil</button>
+            `;
+            groupList.appendChild(gDiv);
+        });
+    }
+
+    function renderBlogs() {
+        const container = document.getElementById('admin-blog-list');
+        container.innerHTML = '';
+        blogs.forEach((blog, idx) => {
+            const card = document.createElement('div');
+            card.className = 'admin-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="color:var(--gold)">${blog.title}</strong><br>
+                        <small>${blog.author} | ${blog.date}</small>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteBlog(${idx})">Sil</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function saveBlog() {
+        const title = document.getElementById('blog-title').value;
+        const author = document.getElementById('blog-author').value;
+        const summary = document.getElementById('blog-summary').value;
+        
+        const content = quill.root.innerHTML; 
+        
+        if(!title || content === '<p><br></p>') return alert("Başlık ve içerik zorunludur.");
+
+        const newBlog = {
+            id: Date.now(),
+            title,
+            author,
+            summary,
+            content,
+            date: new Date().toLocaleDateString('tr-TR'),
+            published: true 
+        };
+
+        blogs.push(newBlog);
+        sync('blogs');
+        
+        document.getElementById('blog-title').value = '';
+        document.getElementById('blog-author').value = '';
+        document.getElementById('blog-summary').value = '';
+        quill.setContents([]);
+    }
+
+    function deleteBlog(idx) {
+        if(confirm("Bu blog yazısını silmek istediğinize emin misiniz?")) {
+            blogs.splice(idx, 1);
+            sync('blogs');
+        }
+    }
+
+    function saveEvent() {
+        const name = document.getElementById('ev-name').value;
+        const date = document.getElementById('ev-date').value;
+        if(!name || !date) return alert("İsim ve tarih zorunludur.");
+        events.push({ id: Date.now(), name, date, groups: [], published: true });
+        sync('events');
+    }
+
+    function addGroup(evIdx) {
+        const newGroup = {
+            id: 'g' + Date.now(),
+            gname: document.getElementById(`gname-${evIdx}`).value,
+            gm: document.getElementById(`gm-${evIdx}`).value,
+            gm_phone: document.getElementById(`phone-${evIdx}`).value,
+            capacity: parseInt(document.getElementById(`cap-${evIdx}`).value) || 0,
+            status: "Aktif",
+            description: document.getElementById(`desc-${evIdx}`).value,
+            players: []
+        };
+        events[evIdx].groups.push(newGroup);
+        sync('events');
+    }
+
+    function deleteEvent(idx) { if(confirm("Silmek istiyor musunuz?")) { events.splice(idx, 1); sync('events'); } }
+    function deleteGroup(evIdx, gIdx) { events[evIdx].groups.splice(gIdx, 1); sync('events'); }
+
+    window.onload = checkAuth;
 </script>
-
-<div class="welcome" style="background: linear-gradient(135deg, var(--deep-navy) 0%, #001a33 100%); padding: 50px 5%; border-bottom: 2px solid var(--gold);">
-    <h1 class="title">BOĞAZİÇİ ÜNİVERSİTESİ OYUN KULÜBÜ</h1>
-    <img src="buokneo.png" style="display: block; max-width: 200px; margin-left: auto; margin-right: auto; padding-top: 15px; padding-bottom: 50px;">
-</div>
-
-<!--Buranın dar ekranlarda görünüşünü beğenmediğim. Belki değiştirilmesi gerekebilir.-->
-<div class="hakkimizda">
-    <div><h1 style="color: var(--deep-navy);">Her türlü oyunu oynayan, oynatan kulüp BUOK</h1></div>
-    <div style="background-color: var(--deep-navy); color: var(--gold); padding: 5%; border-radius: 12px;">BUOK kutu oyunları ve masaüstü rol yapma oyunları başta olmak üzere, E-spor da dahil her alandaki oyunlarla ilgilenen, bu gibi oyunları oynayan öğrencilerin buluşmasını, birlikte güzel zaman geçirmelerini sağlamayı kendine amaç haline getirmiş bir hobi kulübüdür. Perşembeleri yaptığımız 100’ü aşkın kutu oyunumuzla Boardgame Night, her ay gerçekleşen Random Encounter FRP etkinliğimiz, e-Spor turnuvaları ve online oyun toplaşmaları, Game Jamler, LARP’lar, Treasure Huntlar, Boss Fight ve daha birçok etkinlik bu kulüpte sizleri bekliyor. Çoğu zaman açık olan kulüp odamızda konsollarımızdan birinde oyun oynayabilir, arkadaşlarınız ve diğer üyelerle kutu oyunları oynayabilir ya da sadece oturup diğer geeklerle sevdiğiniz kitap serisinin filminin ne kadar kötü olduğunu tartışabilirsiniz. </div>
-</div>
-
-<!--Tabii ki daha fazla etkinliğimiz ve daha uygun açıklamalarımız olacaktır.-->
-<h1 class="title">Ne Yapıyoruz</h1>
-<div class="neyapiyoruz">
-    <div class="card">
-        <h3>Random Encounter</h3>
-        <p>Random Encounter, Oyun Kulübü bünyesinde her ayın ilk hafta sonu düzenlediğimiz masaüstü rol yapma oyunları etkinliğidir.
-        <p>Etkinliğimizde, Dungeons and Dragons, Pathfinder ya da diğer Fantastik Rol Yapma oyunlarına (FRP) dair hiçbir fikriniz olmasa dahi katılıp eğlenebileceğiniz, farklı farklı sistemlerde birçok masa açılır. Ayrıca kulübümüz ödüllü GM Yarışması ile GM’lerimizi yeni sistemler denemeye, bol bol oyun oynatmaya ve öğrenmeye teşvik eder.</p>
-        <p>Hikaye Anlatıcılarımız, Oyun Yöneticilerimiz ve Dungeon Master’larımız olarak hepinizi Random Encounter etkinliklerimize bekler, sene içinde yapılacak olan GMlik Yarışmasında ise tüm GMlerimize başarılar dileriz.</p>
-    </div>
-
-    <div class="card">
-        <h3>Oyun Geceleri</h3>
-        <p>Kulübümüz her perşembe Board Game Night etkinliği ile odamızda buluşarak 100’den fazla oyuna sahip geniş kutu oyunu koleksiyonunu üyelerine açar. Düzenli olarak genişlemekte olan kutu oyunu koleksiyonunu arkadaşlarınızla denemeye sizi davet eder.</p>
-        <p>Board Game Night etkinliği dışında da, odamızın kullanıma açık olduğu her an arkadaşlarınızla gelebilir, kutu oyunu dolabını açabilir ve çeşit çeşit oyunlarımızdan beğendiğinizi seçip birlikte oynayabilirsiniz.</p>
-    </div>
-
-    <div class="card">
-        <h3>Büyük Oyun Günü</h3>
-        <p>Buraya Bir Şeyler Yazmaya Üşendim. Sonra Bir Açıklama yazarız</p>
-    </div>
-</div>
-
-<h1 class="title" style="margin-top: 25px; padding-top: 2.5%; background-color: var(--deep-navy); color: var(--gold)">Yeni Blog Yazıları</h1>
-<div class="blog" id="latest-blog-container" style="background: var(--deep-navy); margin-top: 0px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-    <p style="text-align: center; color: var(--gold);">Blog yazıları yükleniyor...</p>
-</div>
-
-<footer>
-    © 2026 BUOK - Boğaziçi Üniversitesi Oyun Kulübü
-</footer>
-
 </body>
-
 </html>

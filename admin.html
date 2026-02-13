@@ -133,11 +133,44 @@
         <h2>4. Mevcut Blog Yazıları</h2>
             <div id="admin-blog-list"></div>
         </div>
+
+         <h2>5. Öne Çıkarılan Oyun</h2>
+            <div id="admin-game"></div>
+        </div>
+
+        <div class="admin-card">
+        <h2>6. Öne Çıkarılan Oyunu Düzenle</h2>
+            <div class="form-grid">
+                <div>
+                    <label>Oyunun İsmi</label>
+                    <input type="text" id="game-name" placeholder="e.g. Twilight Imperium">
+                </div>
+                <div>
+                    <label>Kaç Kişilik</label>
+                    <input type="text" id="game-size" placeholder="4-6 Kişilik">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div>
+                    <label>Oynanış Süresi</label>
+                    <input type="text" id="game-duration" placeholder="e.g. 30 Dakika">
+                </div>
+                <div>
+                    <label>Zorluk Seviyesi</label>
+                    <input type="text" id="game-difficulty" placeholder="e.g. Coughing Baby">
+                </div>
+            </div>
+            <label>Açıklama</label>
+            <textarea id="game-description" rows="2" style="margin-bottom:15px"></textarea>
+            
+            <button class="btn btn-gold" onclick="saveSelectedGame()">Öne Çıkarılan Oyunu Kaydet</button>
+        </div>
 </div>
 
 <script>
     let events = [];
     let blogs = [];
+    let selectedGame = [];
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynNlPBLxGrKs2IEcsVzAMTJJzG9_WPa0bdIHWiG-2_xpnqlUoypH0u_wL_GFSHPwQj6A/exec";
 
     function showLoading(text) {
@@ -212,6 +245,9 @@
             const blogRes = await fetch(`${SCRIPT_URL}?action=getBlogs`);
             if (blogRes.ok) blogs = await blogRes.json();
 
+            const seGameRes = await fetch(`${SCRIPT_URL}?action=getSelectedGame`);
+            if (blogRes.ok) selectedGame = await seGameRes.json();
+
             renderAll();
         } catch (e) {
             console.error(e);
@@ -239,6 +275,13 @@
                 });
             }
 
+            if (type === 'selectedGame' || type === 'all') {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "updateSelectedGame", data: selectedGame })
+                });
+            }
+
             renderAll();
             alert("Değişiklikler kaydedildi!");
         } catch (e) {
@@ -252,6 +295,7 @@
     function renderAll() {
         renderEvents();
         renderBlogs();
+        renderSelectedGame();
     }
 
     function renderEvents() {
@@ -346,6 +390,41 @@
         });
     }
 
+    function renderSelectedGame() {
+        const container = document.getElementById('admin-game');
+        container.className = 'admin-card';
+        container.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="color:var(--gold)">${selectedGame.name}</strong><br>
+                        <small>${selectedGame.size} | ${selectedGame.duration} | ${selectedGame.difficulty}</small>
+                        <small>${selectedGame.description}</small>
+                    </div>
+                </div>
+            `;
+    }
+
+    function saveSelectedGame() {
+        const name = document.getElementById('game-name').value;
+        const size = document.getElementById('game-size').value;
+        const duration = document.getElementById('game-duration').value;
+        const difficulty = document.getElementById('game-difficulty').value;
+        const description = document.getElementById('game-description').value;
+    
+        
+        const newSelectedGame = {
+            name,
+            size,
+            duration,
+            difficulty,
+            description,
+        };
+
+        selectedGame = newSelectedGame;
+        sync('selectedGame');
+    }
+
+
     function saveBlog() {
         const title = document.getElementById('blog-title').value;
         const author = document.getElementById('blog-author').value;
@@ -410,6 +489,7 @@
 </script>
 </body>
 </html>
+
 
 
 

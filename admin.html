@@ -391,9 +391,9 @@
     }
 
     function renderSelectedGame() {
-        const container = document.getElementById('admin-game');
-        container.className = 'admin-card';
-        container.innerHTML = `
+        const card = document.getElementById('admin-game');
+        card.className = 'admin-card';
+        card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <strong style="color:var(--gold)">${selectedGame.name}</strong><br>
@@ -489,6 +489,7 @@
 </script>
 </body>
 </html>
+
 
 
 

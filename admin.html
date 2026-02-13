@@ -167,7 +167,7 @@
 <script>
     let events = [];
     let blogs = [];
-    let selectedGame = [];
+    let selectedGame = {};
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynNlPBLxGrKs2IEcsVzAMTJJzG9_WPa0bdIHWiG-2_xpnqlUoypH0u_wL_GFSHPwQj6A/exec";
 
     function showLoading(text) {
@@ -238,13 +238,16 @@
         try {
             const evRes = await fetch(`${SCRIPT_URL}?action=getEvents`);
             if (evRes.ok) events = await evRes.json();
-
+    
             const blogRes = await fetch(`${SCRIPT_URL}?action=getBlogs`);
             if (blogRes.ok) blogs = await blogRes.json();
-
+    
             const seGameRes = await fetch(`${SCRIPT_URL}?action=getSelectedGame`);
-            if (seGameRes.ok) selectedGame = await seGameRes.json();
-
+            if (seGameRes.ok) {
+                selectedGame = await seGameRes.json();
+                fillSelectedGameInputs(); // Add this line
+            }
+    
             renderAll();
         } catch (e) {
             console.error(e);
@@ -252,6 +255,15 @@
         } finally {
             hideLoading();
         }
+    }
+
+    function fillSelectedGameInputs() {
+        if (!selectedGame) return;
+        document.getElementById('game-name').value = selectedGame.name || '';
+        document.getElementById('game-size').value = selectedGame.size || '';
+        document.getElementById('game-duration').value = selectedGame.duration || '';
+        document.getElementById('game-difficulty').value = selectedGame.difficulty || '';
+        document.getElementById('game-description').value = selectedGame.description || '';
     }
 
     async function sync(type = 'all') {
@@ -385,23 +397,6 @@
             container.appendChild(card);
         });
     }
-    
-    function renderSelectedGame() {
-        const container = document.getElementById('admin-game');
-        container.innerHTML = '';
-        const card = document.createElement('div');
-        card.className = 'admin-card';
-        card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong style="color:var(--gold)">${selectedGame.name}</strong><br>
-                        <small>${selectedGame.size} | ${selectedGame.duration} | ${selectedGame.difficulty}</small>
-                        <small><br>${selectedGame.description}</small>
-                    </div>
-                </div>
-            `;
-        container.appendChild(card);
-    }
 
     function saveSelectedGame() {
         const name = document.getElementById('game-name').value;
@@ -488,6 +483,7 @@
 </script>
 </body>
 </html>
+
 
 
 

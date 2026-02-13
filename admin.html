@@ -243,7 +243,7 @@
             if (blogRes.ok) blogs = await blogRes.json();
 
             const seGameRes = await fetch(`${SCRIPT_URL}?action=getSelectedGame`);
-            if (blogRes.ok) selectedGame = await seGameRes.json();
+            if (seGameRes.ok) selectedGame = await seGameRes.json();
 
             renderAll();
         } catch (e) {
@@ -292,7 +292,6 @@
     function renderAll() {
         renderEvents();
         renderBlogs();
-        renderSelectedGame();
     }
 
     function renderEvents() {
@@ -387,23 +386,6 @@
         });
     }
 
-    function renderSelectedGame() {
-        const container = document.getElementById('admin-game');
-        container.innerHTML = '';
-        const card = document.createElement('div');
-        card.className = 'admin-card';
-        card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong style="color:var(--gold)">${selectedGame.name}</strong><br>
-                        <small>${selectedGame.size} | ${selectedGame.duration} | ${selectedGame.difficulty}</small>
-                        <small><br>${selectedGame.description}</small>
-                    </div>
-                </div>
-            `;
-        container.appendChild(card);
-    }
-
     function saveSelectedGame() {
         const name = document.getElementById('game-name').value;
         const size = document.getElementById('game-size').value;
@@ -489,6 +471,7 @@
 </script>
 </body>
 </html>
+
 
 
 

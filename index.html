@@ -349,9 +349,31 @@
         }
     }
 
+    async function fetchFeaturedGame() {
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSelectedGame`);
+            const game = await res.json();
+            
+            // If data exists, populate the UI
+            if (game && game.name) {
+                document.getElementById('feat-game-name').innerText = game.name;
+                document.getElementById('feat-game-stats').innerText = game.size;
+                document.getElementById('feat-game-description').innerText = game.description;
+                document.getElementById('feat-game-duration').innerText = game.duration;
+                document.getElementById('feat-game-difficulty').innerText = game.difficulty;
+                
+                // Make the section visible
+                document.getElementById('featured-game-section').style.display = 'block';
+            }
+        } catch (e) {
+            console.error("Öne çıkan oyun yüklenemedi:", e);
+        }
+    }
+
     window.onload = () => {
         fetchEvents();     
         fetchLatestBlogs();
+        fetchFeaturedGame();
     };
 </script>
 
@@ -393,11 +415,27 @@
     <p style="text-align: center; color: var(--gold);">Blog yazıları yükleniyor...</p>
 </div>
 
+<div id="featured-game-section" style="display: none; max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <h1 class="title">Öne Çıkan Oyun</h1>
+    <div class="card" style="border-left: 4px solid var(--gold); display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+            <h2 id="feat-game-name" style="color: var(--gold); margin: 0;"></h2>
+            <div id="feat-game-stats" style="font-size: 0.9rem; color: var(--bright-blue); font-weight: bold;"></div>
+        </div>
+        <p id="feat-game-description" style="font-style: italic; color: #bbb;"></p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; font-size: 0.85rem; border-top: 1px solid #333; padding-top: 10px;">
+            <div><strong>Süre:</strong> <span id="feat-game-duration"></span></div>
+            <div><strong>Zorluk:</strong> <span id="feat-game-difficulty"></span></div>
+        </div>
+    </div>
+</div>
+
 <footer>
     © 2026 BUOK - Boğaziçi Üniversitesi Oyun Kulübü
 </footer>
 
 </body>
 </html>
+
 
 

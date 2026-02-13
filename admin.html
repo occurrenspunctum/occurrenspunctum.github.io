@@ -132,34 +132,34 @@
 
         <h2>4. Mevcut Blog Yazıları</h2>
             <div id="admin-blog-list"></div>
-        </div>
-    
+
         <div class="admin-card">
-        <h2>5. Öne Çıkarılan Oyunu Düzenle</h2>
-            <div class="form-grid">
-                <div>
-                    <label>Oyunun İsmi</label>
-                    <input type="text" id="game-name" placeholder="e.g. Twilight Imperium">
+            <h2>5. Öne Çıkarılan Oyunu Düzenle</h2>
+                <div class="form-grid">
+                    <div>
+                        <label>Oyunun İsmi</label>
+                        <input type="text" id="game-name" placeholder="e.g. Twilight Imperium">
+                    </div>
+                    <div>
+                        <label>Kaç Kişilik</label>
+                        <input type="text" id="game-size" placeholder="4-6 Kişilik">
+                    </div>
                 </div>
-                <div>
-                    <label>Kaç Kişilik</label>
-                    <input type="text" id="game-size" placeholder="4-6 Kişilik">
+                <div class="form-grid">
+                    <div>
+                        <label>Oynanış Süresi</label>
+                        <input type="text" id="game-duration" placeholder="e.g. 30 Dakika">
+                    </div>
+                    <div>
+                        <label>Zorluk Seviyesi</label>
+                        <input type="text" id="game-difficulty" placeholder="e.g. Coughing Baby">
+                    </div>
                 </div>
+                <label>Açıklama</label>
+                <textarea id="game-description" rows="2" style="margin-bottom:15px"></textarea>
+                
+                <button class="btn btn-gold" onclick="saveSelectedGame()">Öne Çıkarılan Oyunu Kaydet</button>
             </div>
-            <div class="form-grid">
-                <div>
-                    <label>Oynanış Süresi</label>
-                    <input type="text" id="game-duration" placeholder="e.g. 30 Dakika">
-                </div>
-                <div>
-                    <label>Zorluk Seviyesi</label>
-                    <input type="text" id="game-difficulty" placeholder="e.g. Coughing Baby">
-                </div>
-            </div>
-            <label>Açıklama</label>
-            <textarea id="game-description" rows="2" style="margin-bottom:15px"></textarea>
-            
-            <button class="btn btn-gold" onclick="saveSelectedGame()">Öne Çıkarılan Oyunu Kaydet</button>
         </div>
     </div>
 </div>
@@ -483,6 +483,7 @@
 </script>
 </body>
 </html>
+
 
 
 
